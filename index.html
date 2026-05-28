@@ -1,1284 +1,1814 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Forest Cafe — 森の隠れ家カフェ</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Zen+Antique+Soft&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet" />
-
-  <style>
-    /* ─────────────────────────────────────────
-       CSS Custom Properties
-    ───────────────────────────────────────── */
-    :root {
-      --forest-deep:   #1e3024;
-      --forest-mid:    #2d4a35;
-      --forest-light:  #4a7c59;
-      --forest-mist:   #8ab89a;
-      --bark-dark:     #4a3728;
-      --bark-mid:      #7a5c45;
-      --bark-warm:     #b8876a;
-      --cream:         #f5f0e8;
-      --cream-warm:    #ede5d5;
-      --cream-deep:    #d9cdb8;
-      --text-dark:     #2c2319;
-      --text-mid:      #5a4a3a;
-      --text-light:    #8a7a6a;
-      --gold:          #c9a96e;
-      --gold-light:    #e0c998;
-
-      --ff-display:    'Cormorant Garamond', Georgia, serif;
-      --ff-jp:         'Zen Antique Soft', serif;
-      --ff-body:       'Raleway', sans-serif;
-
-      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    /* ─────────────────────────────────────────
-       Reset & Base
-    ───────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background-color: var(--cream);
-      color: var(--text-dark);
-      font-family: var(--ff-body);
-      font-weight: 300;
-      line-height: 1.8;
-      overflow-x: hidden;
-    }
-
-    img { display: block; max-width: 100%; }
-    a   { color: inherit; text-decoration: none; }
-
-    /* ─────────────────────────────────────────
-       Noise Texture Overlay
-    ───────────────────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ─────────────────────────────────────────
-       NAV
-    ───────────────────────────────────────── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.4rem 4rem;
-      transition: background 0.5s var(--ease-smooth), backdrop-filter 0.5s;
-    }
-
-    nav.scrolled {
-      background: rgba(30, 48, 36, 0.88);
-      backdrop-filter: blur(12px);
-    }
-
-    .nav-logo {
-      font-family: var(--ff-display);
-      font-size: 1.5rem;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-      color: var(--cream);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .nav-logo span {
-      display: inline-block;
-      width: 28px; height: 28px;
-      background: var(--gold);
-      border-radius: 50%;
-      position: relative;
-    }
-
-    .nav-logo span::after {
-      content: '🌿';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 14px;
-      line-height: 1;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--cream-warm);
-      position: relative;
-      padding-bottom: 2px;
-      transition: color 0.3s;
-    }
-
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 0; height: 1px;
-      background: var(--gold);
-      transition: width 0.35s var(--ease-smooth);
-    }
-
-    .nav-links a:hover { color: var(--gold-light); }
-    .nav-links a:hover::after { width: 100%; }
-
-    /* ─────────────────────────────────────────
-       HERO
-    ───────────────────────────────────────── */
-    .hero {
-      position: relative;
-      height: 100vh;
-      min-height: 680px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    /* SVG forest background */
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% 100%, var(--forest-deep) 0%, transparent 70%),
-        linear-gradient(165deg, #0d1f13 0%, #1a3020 35%, #2d4a35 65%, #1e3024 100%);
-    }
-
-    /* Layered tree silhouettes */
-    .tree-layer {
-      position: absolute;
-      bottom: 0;
-      left: 0; right: 0;
-      overflow: hidden;
-    }
-
-    .tree-layer svg {
-      display: block;
-      width: 100%;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      padding: 2rem;
-      animation: heroReveal 1.6s var(--ease-smooth) both;
-    }
-
-    @keyframes heroReveal {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero-eyebrow {
-      font-family: var(--ff-body);
-      font-size: 0.68rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.2rem;
-      animation: heroReveal 1.6s 0.2s var(--ease-smooth) both;
-    }
-
-    .hero-title {
-      font-family: var(--ff-display);
-      font-size: clamp(4rem, 10vw, 8rem);
-      font-weight: 300;
-      line-height: 0.95;
-      color: var(--cream);
-      letter-spacing: -0.01em;
-      animation: heroReveal 1.6s 0.35s var(--ease-smooth) both;
-    }
-
-    .hero-title em {
-      font-style: italic;
-      color: var(--gold-light);
-    }
-
-    .hero-tagline {
-      font-family: var(--ff-jp);
-      font-size: clamp(0.85rem, 2vw, 1.1rem);
-      color: var(--forest-mist);
-      margin-top: 1.8rem;
-      letter-spacing: 0.15em;
-      animation: heroReveal 1.6s 0.5s var(--ease-smooth) both;
-    }
-
-    .hero-cta {
-      margin-top: 3rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.8rem;
-      padding: 0.9rem 2.4rem;
-      border: 1px solid rgba(201, 169, 110, 0.5);
-      color: var(--gold-light);
-      font-size: 0.72rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      border-radius: 100px;
-      transition: all 0.4s var(--ease-smooth);
-      animation: heroReveal 1.6s 0.65s var(--ease-smooth) both;
-    }
-
-    .hero-cta:hover {
-      background: rgba(201, 169, 110, 0.12);
-      border-color: var(--gold);
-      gap: 1.2rem;
-    }
-
-    .hero-cta svg {
-      transition: transform 0.3s var(--ease-smooth);
-    }
-    .hero-cta:hover svg { transform: translateX(4px); }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--forest-mist);
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      animation: heroReveal 1.6s 1s var(--ease-smooth) both;
-    }
-
-    .scroll-line {
-      width: 1px;
-      height: 40px;
-      background: linear-gradient(to bottom, transparent, var(--gold));
-      animation: scrollPulse 2s infinite;
-    }
-
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.4; }
-      50%       { opacity: 1; }
-    }
-
-    /* Leaf particles */
-    .leaf {
-      position: absolute;
-      opacity: 0;
-      font-size: 1rem;
-      pointer-events: none;
-      animation: leafFall linear infinite;
-    }
-
-    @keyframes leafFall {
-      0%   { opacity: 0; transform: translateY(-20px) rotate(0deg); }
-      10%  { opacity: 0.6; }
-      90%  { opacity: 0.3; }
-      100% { opacity: 0; transform: translateY(100vh) rotate(360deg); }
-    }
-
-    /* ─────────────────────────────────────────
-       SECTION COMMONS
-    ───────────────────────────────────────── */
-    section { position: relative; }
-
-    .section-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 2.5rem;
-    }
-
-    .section-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .section-label::before {
-      content: '';
-      display: inline-block;
-      width: 32px;
-      height: 1px;
-      background: var(--gold);
-    }
-
-    .fade-in {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-smooth);
-    }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ─────────────────────────────────────────
-       CONCEPT
-    ───────────────────────────────────────── */
-    .concept {
-      background: var(--cream);
-      padding: 130px 0 110px;
-    }
-
-    .concept-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6rem;
-      align-items: center;
-    }
-
-    .concept-visual {
-      position: relative;
-    }
-
-    .concept-img-frame {
-      position: relative;
-      aspect-ratio: 3/4;
-      border-radius: 2px;
-      overflow: hidden;
-      background: var(--forest-mid);
-    }
-
-    /* SVG Illustration for concept */
-    .concept-illustration {
-      width: 100%;
-      height: 100%;
-    }
-
-    .concept-img-frame::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(30,48,36,0.4) 0%, transparent 60%);
-    }
-
-    .concept-deco {
-      position: absolute;
-      top: -20px; right: -20px;
-      width: 120px; height: 120px;
-      border: 1px solid var(--cream-deep);
-      border-radius: 2px;
-      z-index: -1;
-    }
-
-    .concept-deco-2 {
-      position: absolute;
-      bottom: -20px; left: -20px;
-      width: 80px; height: 80px;
-      background: var(--gold);
-      opacity: 0.15;
-      border-radius: 50%;
-      z-index: -1;
-    }
-
-    .concept-heading {
-      font-family: var(--ff-display);
-      font-size: clamp(2.4rem, 4vw, 3.4rem);
-      font-weight: 300;
-      line-height: 1.2;
-      color: var(--forest-deep);
-      margin-bottom: 1.8rem;
-    }
-
-    .concept-heading em {
-      font-style: italic;
-      color: var(--bark-mid);
-    }
-
-    .concept-text {
-      color: var(--text-mid);
-      font-size: 0.95rem;
-      line-height: 2;
-      margin-bottom: 1.5rem;
-    }
-
-    .concept-quote {
-      font-family: var(--ff-display);
-      font-style: italic;
-      font-size: 1.3rem;
-      color: var(--forest-light);
-      border-left: 2px solid var(--gold);
-      padding-left: 1.5rem;
-      margin-top: 2.5rem;
-      line-height: 1.7;
-    }
-
-    /* ─────────────────────────────────────────
-       MENU
-    ───────────────────────────────────────── */
-    .menu {
-      background: var(--forest-deep);
-      padding: 130px 0;
-      overflow: hidden;
-    }
-
-    .menu::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 60% 40% at 20% 80%, rgba(74,124,89,0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 80% 20%, rgba(201,169,110,0.07) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    .menu-header {
-      text-align: center;
-      margin-bottom: 5rem;
-    }
-
-    .menu-heading {
-      font-family: var(--ff-display);
-      font-size: clamp(3rem, 6vw, 5rem);
-      font-weight: 300;
-      color: var(--cream);
-      letter-spacing: -0.01em;
-    }
-
-    .menu-heading em {
-      font-style: italic;
-      color: var(--gold-light);
-    }
-
-    .menu-sub {
-      font-family: var(--ff-jp);
-      font-size: 0.85rem;
-      color: var(--forest-mist);
-      margin-top: 0.8rem;
-      letter-spacing: 0.1em;
-    }
-
-    .menu-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-    }
-
-    .menu-card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 4px;
-      overflow: hidden;
-      transition: transform 0.4s var(--ease-spring), border-color 0.4s;
-    }
-
-    .menu-card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(201,169,110,0.3);
-    }
-
-    .menu-card-img {
-      aspect-ratio: 4/3;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .menu-card-img svg {
-      width: 100%;
-      height: 100%;
-      transition: transform 0.6s var(--ease-smooth);
-    }
-
-    .menu-card:hover .menu-card-img svg {
-      transform: scale(1.05);
-    }
-
-    .menu-card-body {
-      padding: 1.8rem;
-    }
-
-    .menu-card-tag {
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.6rem;
-    }
-
-    .menu-card-name {
-      font-family: var(--ff-display);
-      font-size: 1.5rem;
-      font-weight: 400;
-      color: var(--cream);
-      margin-bottom: 0.5rem;
-    }
-
-    .menu-card-name em {
-      display: block;
-      font-style: italic;
-      font-size: 0.9em;
-      color: var(--gold-light);
-    }
-
-    .menu-card-desc {
-      font-size: 0.82rem;
-      color: rgba(245,240,232,0.55);
-      line-height: 1.8;
-    }
-
-    .menu-card-price {
-      margin-top: 1.4rem;
-      font-family: var(--ff-display);
-      font-size: 1.3rem;
-      color: var(--gold);
-      display: flex;
-      align-items: baseline;
-      gap: 0.3rem;
-    }
-
-    .menu-card-price span {
-      font-size: 0.7rem;
-      font-family: var(--ff-body);
-      color: rgba(201,169,110,0.6);
-      letter-spacing: 0.1em;
-    }
-
-    /* ─────────────────────────────────────────
-       ACCESS
-    ───────────────────────────────────────── */
-    .access {
-      background: var(--cream-warm);
-      padding: 130px 0;
-    }
-
-    .access-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: start;
-    }
-
-    .access-heading {
-      font-family: var(--ff-display);
-      font-size: clamp(2.4rem, 4vw, 3.4rem);
-      font-weight: 300;
-      color: var(--forest-deep);
-      line-height: 1.2;
-      margin-bottom: 2.5rem;
-    }
-
-    .access-heading em {
-      font-style: italic;
-      color: var(--bark-mid);
-    }
-
-    .info-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .info-item {
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      padding: 1.2rem 0;
-      border-bottom: 1px solid var(--cream-deep);
-      align-items: baseline;
-    }
-
-    .info-item:first-child { border-top: 1px solid var(--cream-deep); }
-
-    .info-key {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      padding-top: 2px;
-    }
-
-    .info-val {
-      font-size: 0.9rem;
-      color: var(--text-mid);
-      line-height: 1.8;
-    }
-
-    .info-val strong {
-      font-weight: 500;
-      color: var(--text-dark);
-    }
-
-    .access-map {
-      position: relative;
-      aspect-ratio: 1;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    /* SVG map illustration */
-    .map-frame {
-      width: 100%;
-      height: 100%;
-      background: var(--forest-mid);
-    }
-
-    .access-note {
-      margin-top: 1.8rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.8rem;
-      font-size: 0.82rem;
-      color: var(--text-light);
-      line-height: 1.7;
-    }
-
-    .access-note svg {
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    /* ─────────────────────────────────────────
-       FOOTER
-    ───────────────────────────────────────── */
-    footer {
-      background: var(--forest-deep);
-      padding: 4rem 2.5rem;
-    }
-
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.8rem;
-    }
-
-    .footer-logo {
-      font-family: var(--ff-display);
-      font-size: 2rem;
-      font-weight: 300;
-      letter-spacing: 0.15em;
-      color: var(--cream);
-    }
-
-    .footer-logo em {
-      font-style: italic;
-      color: var(--gold-light);
-    }
-
-    .footer-tagline {
-      font-family: var(--ff-jp);
-      font-size: 0.78rem;
-      color: var(--forest-mist);
-      letter-spacing: 0.15em;
-    }
-
-    .footer-divider {
-      width: 60px;
-      height: 1px;
-      background: rgba(201,169,110,0.3);
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .footer-links a {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(245,240,232,0.4);
-      transition: color 0.3s;
-    }
-
-    .footer-links a:hover { color: var(--gold-light); }
-
-    .footer-copy {
-      font-size: 0.72rem;
-      color: rgba(245,240,232,0.25);
-      letter-spacing: 0.08em;
-    }
-
-    /* ─────────────────────────────────────────
-       RESPONSIVE
-    ───────────────────────────────────────── */
-    @media (max-width: 900px) {
-      nav { padding: 1.2rem 2rem; }
-      .nav-links { gap: 1.5rem; }
-
-      .concept-grid,
-      .access-grid {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-      }
-
-      .menu-cards { grid-template-columns: 1fr; }
-
-      .concept-deco,
-      .concept-deco-2 { display: none; }
-    }
-
-    @media (max-width: 600px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { display: none; }
-      .section-inner { padding: 0 1.5rem; }
-      .concept, .menu, .access { padding: 80px 0; }
-    }
-  </style>
+<!-- saved from url=(0051)file:///C:/Users/taiga/Downloads/lexara-law_12.html -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEXARA法律事務所 | 企業間訴訟・相続・危機対応 — 丸の内</title>
+<meta name="description" content="丸の内のLEXARA（レクサラ）法律事務所。企業間訴訟・相続遺産・家族法・24時間危機対応まで、32年以上の実績を持つ弁護士陣が徹底サポート。秘密厳守・初回相談受付中。">
+<meta name="keywords" content="法律事務所,弁護士,企業間訴訟,相続,遺産,離婚,家族法,危機対応,丸の内,東京,顧問弁護士">
+<meta name="robots" content="index, follow">
+<meta name="author" content="LEXARA法律事務所">
+<link rel="canonical" href="https://lexara-law.jp/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LEXARA法律事務所 | 企業間訴訟・相続・危機対応">
+<meta property="og:description" content="企業間訴訟・相続・危機対応で圧倒的な実績を持つ丸の内の法律事務所。秘密厳守・初回相談受付中。">
+<meta property="og:url" content="https://lexara-law.jp/">
+<meta property="og:site_name" content="LEXARA法律事務所">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LEXARA法律事務所 | 企業間訴訟・相続・危機対応">
+<meta name="twitter:description" content="丸の内のLEXARA法律事務所。32年以上の実績。秘密厳守・初回相談受付中。">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"LegalService","name":"LEXARA法律事務所","url":"https://lexara-law.jp","description":"企業間訴訟・相続・家族法・危機対応を専門とする丸の内の法律事務所","telephone":"+81-3-6xxx-xxxx","email":"counsel@lexara-law.jp","address":{"@type":"PostalAddress","streetAddress":"丸の内トラストタワー23F 2-1-1","addressLocality":"千代田区","addressRegion":"東京都","postalCode":"100-0005","addressCountry":"JP"},"openingHours":"Mo-Fr 09:00-18:00","priceRange":"¥¥¥"}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./index_files/css2" rel="stylesheet">
+<style>
+/* ============================================================
+   LEXARA LAW — MONOLITH NOIR
+   ============================================================ */
+
+:root {
+  --void:        #080808;
+  --obsidian:    #0e0e0f;
+  --charcoal:    #161618;
+  --graphite:    #1e1e21;
+  --steel:       #2a2a2e;
+  --muted:       #3a3a40;
+  --border:      rgba(255,255,255,0.07);
+  --border-lit:  rgba(255,255,255,0.14);
+  --silver:      #9a9aa8;
+  --silver-hi:   #c4c4d0;
+  --white:       #f0f0f2;
+  --white-pure:  #ffffff;
+  --gold:        #b8955a;
+  --gold-light:  #d4b07a;
+  --gold-dim:    rgba(184,149,90,0.15);
+
+  --ff-serif:    'Cinzel', serif;
+  --ff-body:     'EB Garamond', serif;
+  --ff-ui:       'DM Sans', sans-serif;
+
+  --ease-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in:     cubic-bezier(0.4, 0, 1, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--void);
+  color: var(--silver);
+  font-family: var(--ff-body);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+  mix-blend-mode: overlay;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ============================================================
+   LENIS SMOOTH SCROLL PLACEHOLDER + SCROLL PROGRESS
+   ============================================================ */
+.scroll-bar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  z-index: 9999;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px var(--gold);
+}
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+.c-dot {
+  position: fixed; top: 0; left: 0;
+  width: 5px; height: 5px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9997;
+  transform: translate(-50%,-50%);
+}
+@media (hover: none) { .c-dot { display: none; } body { cursor: auto; } }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  padding: 0 4rem;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.6s var(--ease-expo), border-color 0.6s;
+  border-bottom: 1px solid transparent;
+}
+
+nav.solid {
+  background: rgba(8,8,8,0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom-color: var(--border);
+}
+
+.nav-wordmark {
+  font-family: var(--ff-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-wordmark-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+.nav-wordmark-sub {
+  font-family: var(--ff-ui);
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: var(--silver);
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--ff-ui);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--silver);
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.35s var(--ease-expo);
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  font-family: var(--ff-ui);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--void) !important;
+  background: var(--gold);
+  padding: 0.55rem 1.4rem;
+  border-radius: 1px;
+  transition: background 0.3s, box-shadow 0.3s !important;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover {
+  background: var(--gold-light) !important;
+  box-shadow: 0 0 24px rgba(184,149,90,0.35) !important;
+  color: var(--void) !important;
+}
+
+/* ============================================================
+   REVEAL ANIMATIONS
+   ============================================================ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.9s var(--ease-expo), transform 0.9s var(--ease-expo);
+}
+[data-reveal].in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-reveal="left"] { transform: translateX(-40px); }
+[data-reveal="left"].in-view { transform: translateX(0); }
+[data-reveal="right"] { transform: translateX(40px); }
+[data-reveal="right"].in-view { transform: translateX(0); }
+[data-reveal="scale"] { transform: scale(0.96); }
+[data-reveal="scale"].in-view { transform: scale(1); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  padding: 72px 4rem 8rem;
+  overflow: hidden;
+}
+
+/* Geometric background */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--void);
+}
+
+.hero-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+
+.hero-bg-glow {
+  position: absolute;
+  top: -30%; left: 50%;
+  transform: translateX(-50%);
+  width: 900px; height: 700px;
+  background: radial-gradient(ellipse, rgba(184,149,90,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-bg-line {
+  position: absolute;
+  top: 0; right: 25%;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(184,149,90,0.2) 30%, rgba(184,149,90,0.2) 70%, transparent 100%);
+}
+
+.hero-bg-num {
+  position: absolute;
+  bottom: 8rem; right: 4rem;
+  font-family: var(--ff-serif);
+  font-size: 12rem;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255,255,255,0.02);
+  letter-spacing: -0.05em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Hero content */
+.hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+}
+
+
+
+.hero-title {
+  font-family: var(--ff-serif);
+  font-size: clamp(3.2rem, 7.5vw, 7rem);
+  font-weight: 700;
+  line-height: 1.0;
+  color: var(--white);
+  letter-spacing: -0.01em;
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+}
+
+.hero-title-line {
+  display: block;
+  overflow: hidden;
+}
+
+.hero-title-inner {
+  display: block;
+  transform: translateY(110%);
+  animation: slideUp 1s var(--ease-expo) forwards;
+}
+.hero-title-line:nth-child(1) .hero-title-inner { animation-delay: 0.35s; }
+.hero-title-line:nth-child(2) .hero-title-inner { animation-delay: 0.5s; }
+.hero-title-line:nth-child(3) .hero-title-inner { animation-delay: 0.65s; color: var(--gold); font-style: italic; }
+
+.hero-meta {
+  display: flex;
+  align-items: flex-start;
+  gap: 4rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.85s var(--ease-expo) forwards;
+}
+
+.hero-desc {
+  max-width: 360px;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--silver);
+  font-style: italic;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 3rem;
+  flex-shrink: 0;
+}
+
+.hero-stat-num {
+  font-family: var(--ff-serif);
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.hero-stat-label {
+  font-family: var(--ff-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 3rem; right: 4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--ff-ui);
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  animation: fadeUp 1s 1.2s var(--ease-expo) forwards;
+}
+.hero-scroll-hint::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--muted);
+  animation: expandLine 2s 2s var(--ease-expo) infinite alternate;
+}
+@keyframes expandLine {
+  from { width: 16px; }
+  to   { width: 40px; }
+}
+
+@keyframes slideUp {
+  to { transform: translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   DIVIDER
+   ============================================================ */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  position: relative;
+}
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 1px;
+  background: var(--gold);
+}
+
+/* Section common */
+section { position: relative; }
+
+.s-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+}
+
+.s-tag {
+  font-family: var(--ff-ui);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.s-tag::before {
+  content: '';
+  display: block;
+  width: 28px; height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+.s-heading {
+  font-family: var(--ff-serif);
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.s-heading em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* ============================================================
+   ABOUT STRIP
+   ============================================================ */
+.about-strip {
+  padding: 7rem 0;
+  background: var(--obsidian);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.about-strip-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 7rem;
+  align-items: center;
+}
+
+.about-pull {
+  font-family: var(--ff-body);
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--white-pure);
+  border-left: 2px solid var(--gold);
+  padding-left: 2rem;
+}
+
+.about-body p {
+  font-size: 0.95rem;
+  color: var(--silver);
+  line-height: 1.9;
+  margin-bottom: 1.2rem;
+}
+
+.about-body p:last-child { margin-bottom: 0; }
+
+.about-body strong { color: var(--silver-hi); font-weight: 500; }
+
+/* ============================================================
+   PRACTICE AREAS
+   ============================================================ */
+.practice {
+  padding: 9rem 0;
+  background: var(--void);
+}
+
+.practice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 5rem;
+}
+
+.practice-header-right {
+  font-family: var(--ff-ui);
+  font-size: 0.78rem;
+  color: var(--silver);
+  max-width: 300px;
+  line-height: 1.75;
+  text-align: right;
+}
+
+/* Practice grid: asymmetric */
+.practice-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.pcard {
+  background: var(--obsidian);
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.4s var(--ease-expo);
+}
+
+.pcard::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-expo);
+}
+
+.pcard:hover { background: var(--charcoal); }
+.pcard:hover::before { transform: scaleX(1); }
+
+.pcard:active {
+  transform: scale(0.99);
+  transition: transform 0.1s;
+}
+
+.pcard--large { grid-row: 1 / 3; }
+
+.pcard-num {
+  font-family: var(--ff-serif);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  margin-bottom: 3.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.pcard-num::after {
+  content: '';
+  display: block;
+  width: 20px; height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+
+.pcard-icon {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  display: block;
+  filter: grayscale(0.3);
+  transition: transform 0.4s var(--ease-spring);
+}
+.pcard:hover .pcard-icon { transform: scale(1.15) rotate(-5deg); }
+
+.pcard-title {
+  font-family: var(--ff-serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.25;
+  margin-bottom: 1rem;
+  letter-spacing: 0.01em;
+}
+
+.pcard--large .pcard-title {
+  font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+  margin-bottom: 1.5rem;
+}
+
+.pcard-desc {
+  font-size: 0.88rem;
+  color: var(--silver);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.pcard--large .pcard-desc { max-width: 400px; }
+
+.pcard-link {
+  font-family: var(--ff-ui);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: gap 0.3s var(--ease-expo);
+}
+.pcard:hover .pcard-link { gap: 1rem; }
+.pcard-link::after {
+  content: '→';
+  font-size: 0.8rem;
+  transition: transform 0.3s var(--ease-expo);
+}
+.pcard:hover .pcard-link::after { transform: translateX(4px); }
+
+.pcard-bg-num {
+  position: absolute;
+  bottom: -1rem; right: -0.5rem;
+  font-family: var(--ff-serif);
+  font-size: 7rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.02);
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  transition: color 0.4s;
+}
+.pcard:hover .pcard-bg-num { color: rgba(184,149,90,0.04); }
+
+/* ============================================================
+   TEAM
+   ============================================================ */
+.team {
+  padding: 9rem 0;
+  background: var(--charcoal);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.team-header { margin-bottom: 5rem; }
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.tcard {
+  background: var(--charcoal);
+  padding: 2.8rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.4s;
+}
+
+.tcard::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(184,149,90,0.06), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.tcard:hover { background: var(--graphite); }
+.tcard:hover::after { opacity: 1; }
+
+.tcard-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--steel);
+  border: 1px solid var(--border-lit);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ff-serif);
+  font-size: 1.1rem;
+  color: var(--gold);
+  margin-bottom: 1.8rem;
+  font-weight: 600;
+}
+
+.tcard-name {
+  font-family: var(--ff-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.02em;
+}
+
+.tcard-role {
+  font-family: var(--ff-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+
+.tcard-bio {
+  font-size: 0.85rem;
+  color: var(--silver);
+  line-height: 1.8;
+}
+
+/* ============================================================
+   FEES TABLE
+   ============================================================ */
+.fees {
+  padding: 9rem 0;
+  background: var(--void);
+}
+
+.fees-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+.fees-intro { position: sticky; top: 8rem; }
+
+.fees-intro .s-heading { margin-bottom: 1.5rem; }
+
+.fees-note {
+  font-size: 0.85rem;
+  color: var(--silver);
+  line-height: 1.85;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.fees-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--ff-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(184,149,90,0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 1px;
+}
+
+.fees-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+}
+
+.fees-table thead tr {
+  background: var(--graphite);
+  border-bottom: 1px solid var(--border-lit);
+}
+
+.fees-table thead th {
+  padding: 1.2rem 1.5rem;
+  font-family: var(--ff-ui);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--silver-hi);
+  text-align: left;
+}
+
+.fees-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.25s;
+}
+.fees-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+.fees-table tbody tr:last-child { border-bottom: none; }
+
+.fees-table td {
+  padding: 1.3rem 1.5rem;
+  font-size: 0.9rem;
+  color: var(--silver);
+  line-height: 1.6;
+  vertical-align: top;
+}
+
+.fees-table td:first-child {
+  font-family: var(--ff-serif);
+  font-size: 0.95rem;
+  color: var(--white);
+  font-weight: 500;
+}
+
+.fees-table .price {
+  font-family: var(--ff-serif);
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.fees-table .tag-pill {
+  display: inline-block;
+  font-family: var(--ff-ui);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1px;
+  background: var(--gold-dim);
+  color: var(--gold-light);
+  border: 1px solid rgba(184,149,90,0.25);
+}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact {
+  padding: 9rem 0 0;
+  background: var(--obsidian);
+  border-top: 1px solid var(--border);
+}
+
+.contact-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+.contact-left .s-heading { margin-bottom: 1.5rem; }
+
+.contact-desc {
+  font-size: 0.9rem;
+  color: var(--silver);
+  line-height: 1.9;
+  margin-bottom: 3rem;
+  font-style: italic;
+}
+
+.contact-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.contact-detail-item {
+  display: flex;
+  gap: 1.2rem;
+  align-items: flex-start;
+}
+
+.contact-detail-icon {
+  width: 36px; height: 36px;
+  border: 1px solid var(--border-lit);
+  border-radius: 1px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.contact-detail-label {
+  font-family: var(--ff-ui);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.2rem;
+}
+
+.contact-detail-val {
+  font-size: 0.9rem;
+  color: var(--silver-hi);
+}
+
+/* Map placeholder */
+.map-frame {
+  height: 200px;
+  background: var(--charcoal);
+  border: 1px solid var(--border);
+  border-radius: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.map-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.map-pin {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.map-pin-dot {
+  width: 12px; height: 12px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(184,149,90,0.2), 0 0 20px rgba(184,149,90,0.3);
+  animation: mapPulse 2s ease-in-out infinite;
+}
+
+@keyframes mapPulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(184,149,90,0.2), 0 0 20px rgba(184,149,90,0.3); }
+  50%       { box-shadow: 0 0 0 8px rgba(184,149,90,0.1), 0 0 30px rgba(184,149,90,0.4); }
+}
+
+.map-label {
+  font-family: var(--ff-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--silver);
+  background: rgba(14,14,15,0.9);
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--border);
+}
+
+/* Contact form */
+.contact-form { display: flex; flex-direction: column; gap: 0; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+}
+
+.form-field {
+  position: relative;
+  background: var(--charcoal);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  margin: 0 0 1px 0;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.form-row .form-field { border-right: none; }
+.form-row .form-field:last-child { border-right: 1px solid var(--border); }
+
+.form-field:focus-within {
+  border-color: var(--gold);
+  background: rgba(184,149,90,0.03);
+}
+
+.form-field label {
+  display: block;
+  font-family: var(--ff-ui);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--silver);
+  padding: 1rem 1.4rem 0;
+  transition: color 0.3s;
+}
+.form-field:focus-within label { color: var(--gold); }
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.4rem 1.4rem 1rem;
+  font-family: var(--ff-body);
+  font-size: 0.95rem;
+  color: var(--white);
+  resize: none;
+  -webkit-appearance: none;
+}
+
+.form-field select { cursor: pointer; }
+
+.form-field select option {
+  background: var(--charcoal);
+  color: var(--white);
+}
+
+.form-field textarea {
+  min-height: 130px;
+  line-height: 1.7;
+}
+
+input::placeholder, textarea::placeholder { color: var(--muted); }
+
+.form-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 1.2rem 0;
+  font-size: 0.78rem;
+  color: var(--silver);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  margin-top: 1px;
+}
+
+.form-check-row input[type="checkbox"] {
+  width: 14px; height: 14px;
+  margin-top: 2px;
+  accent-color: var(--gold);
+  flex-shrink: 0;
+}
+
+.form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.3rem 1.6rem;
+  background: var(--gold);
+  border: none;
+  cursor: pointer;
+  font-family: var(--ff-ui);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--void);
+  transition: background 0.3s, box-shadow 0.3s, transform 0.15s;
+  width: 100%;
+  margin-top: 1px;
+  border-radius: 0;
+}
+.form-submit:hover {
+  background: var(--gold-light);
+  box-shadow: 0 0 30px rgba(184,149,90,0.25);
+}
+.form-submit:active { transform: scale(0.99); }
+
+.form-submit-arrow {
+  font-size: 1rem;
+  transition: transform 0.3s var(--ease-expo);
+}
+.form-submit:hover .form-submit-arrow { transform: translateX(6px); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  margin-top: 7rem;
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+  background: var(--obsidian);
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-wordmark {
+  font-family: var(--ff-serif);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  color: var(--white);
+}
+
+.footer-copy {
+  font-family: var(--ff-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.footer-links a {
+  font-family: var(--ff-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--gold); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  nav { padding: 0 2rem; }
+  .s-inner, .fees-inner, .contact-inner, .footer-inner { padding: 0 2rem; }
+  .about-strip-inner { padding: 0 2rem; gap: 3rem; }
+
+  .practice-grid { grid-template-columns: 1fr 1fr; }
+  .pcard--large { grid-column: 1 / 3; grid-row: auto; }
+
+  .team-grid { grid-template-columns: 1fr 1fr; }
+
+  .fees-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .fees-intro { position: static; }
+
+  .contact-inner { grid-template-columns: 1fr; gap: 3.5rem; }
+
+  .hero { padding: 0 2rem 7rem; }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero-meta { flex-direction: column; gap: 2.5rem; }
+  .hero-stats { gap: 2rem; }
+  .about-strip-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .practice-header { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+  .practice-header-right { text-align: left; }
+  .practice-grid { grid-template-columns: 1fr; }
+  .pcard--large { grid-column: auto; }
+  .team-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .form-row .form-field { border-right: 1px solid var(--border); }
+}
+
+/* ============================================================
+   HAMBURGER MENU
+   ============================================================ */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px; height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 1001;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 22px; height: 1.5px;
+  background: var(--silver);
+  transition: transform 0.35s var(--ease-expo), opacity 0.35s, background 0.3s;
+  transform-origin: center;
+}
+
+.nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: var(--gold); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: var(--gold); }
+
+/* モバイルメニューオーバーレイ */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,8,8,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-expo);
+}
+
+.mobile-menu.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobile-menu-links {
+  list-style: none;
+  text-align: center;
+  width: 100%;
+}
+
+.mobile-menu-links li {
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.mobile-menu-links li:first-child { border-top: 1px solid var(--border); }
+
+.mobile-menu-links a {
+  display: block;
+  font-family: var(--ff-serif);
+  font-size: clamp(1.4rem, 6vw, 2rem);
+  font-weight: 600;
+  color: var(--silver);
+  letter-spacing: 0.08em;
+  padding: 1.4rem 2rem;
+  transition: color 0.3s, background 0.3s, padding-left 0.4s var(--ease-expo);
+}
+
+.mobile-menu-links a:hover {
+  color: var(--white);
+  padding-left: 2.8rem;
+  background: rgba(255,255,255,0.02);
+}
+
+.mobile-menu-cta {
+  margin-top: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--ff-ui);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--void);
+  background: var(--gold);
+  padding: 1rem 2.5rem;
+  border-radius: 1px;
+  transition: background 0.3s;
+}
+.mobile-menu-cta:hover { background: var(--gold-light); }
+
+.mobile-menu-footer {
+  position: absolute;
+  bottom: 2.5rem;
+  font-family: var(--ff-ui);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  nav { padding: 0 1.5rem; }
+  .nav-toggle { display: flex; }
+  .s-inner, .fees-inner, .contact-inner, .footer-inner { padding: 0 1.5rem; }
+  .about-strip-inner { padding: 0 1.5rem; }
+  .hero { padding: 72px 1.5rem 5rem; }
+  .hero-title { font-size: clamp(2.4rem, 10vw, 3.5rem); margin-bottom: 2rem; }
+  .hero-scroll-hint { display: none; }
+  .hero-bg-num { display: none; }
+  .concept, .menu, .access { padding: 70px 0; }
+  .pcard { padding: 2rem; }
+  .tcard { padding: 2rem 1.8rem; }
+  .fees-table { font-size: 0.8rem; }
+  .fees-table td, .fees-table th { padding: 1rem; }
+  .fees-table th:nth-child(3),
+  .fees-table td:nth-child(3) { display: none; }
+  .contact-inner { padding: 0 1.5rem; }
+  footer { padding: 2.5rem 0; }
+  .footer-inner { flex-direction: column; text-align: center; gap: 1.2rem; padding: 0 1.5rem; }
+  .footer-links { justify-content: center; flex-wrap: wrap; gap: 1.2rem; }
+}
+</style>
 </head>
 <body>
 
-  <!-- ──────────────── NAV ──────────────── -->
-  <nav id="mainNav">
-    <div class="nav-logo">
-      <span></span>
-      Forest Cafe
-    </div>
-    <ul class="nav-links">
-      <li><a href="#concept">Concept</a></li>
-      <li><a href="#menu">Menu</a></li>
-      <li><a href="#access">Access</a></li>
-    </ul>
-  </nav>
+<!-- Scroll progress -->
+<div class="scroll-bar" id="scrollBar" style="width: 0%;"></div>
 
-  <!-- ──────────────── HERO ──────────────── -->
-  <section class="hero" id="hero">
-    <div class="hero-bg"></div>
+<!-- Custom cursor -->
+<div class="c-dot" id="cDot" style="left: 454px; top: 343px;"></div>
 
-    <!-- SVG Tree Silhouettes -->
-    <div class="tree-layer" style="z-index:2;">
-      <svg viewBox="0 0 1440 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-        <!-- Back trees (lighter) -->
-        <g fill="#2d4a35" opacity="0.6">
-          <polygon points="80,360 140,180 200,360"/>
-          <polygon points="110,360 160,200 210,360"/>
-          <polygon points="300,360 370,140 440,360"/>
-          <polygon points="330,360 385,160 440,360"/>
-          <polygon points="550,360 620,100 690,360"/>
-          <polygon points="580,360 638,125 695,360"/>
-          <polygon points="800,360 870,155 940,360"/>
-          <polygon points="1050,360 1115,120 1180,360"/>
-          <polygon points="1200,360 1260,170 1320,360"/>
-          <polygon points="1280,360 1340,140 1400,360"/>
-        </g>
-        <!-- Front trees (darker) -->
-        <g fill="#1a3020">
-          <polygon points="0,360 60,200 120,360"/>
-          <polygon points="200,360 275,140 350,360"/>
-          <polygon points="230,360 295,165 360,360"/>
-          <polygon points="460,360 540,100 620,360"/>
-          <polygon points="700,360 780,130 860,360"/>
-          <polygon points="730,360 800,150 870,360"/>
-          <polygon points="960,360 1040,110 1120,360"/>
-          <polygon points="990,360 1060,135 1130,360"/>
-          <polygon points="1160,360 1230,160 1300,360"/>
-          <polygon points="1350,360 1410,190 1440,360"/>
-          <!-- Ground fill -->
-          <rect x="0" y="340" width="1440" height="20"/>
-        </g>
-        <!-- Foreground silhouette fill -->
-        <rect x="0" y="350" width="1440" height="10" fill="#0d1f13"/>
-      </svg>
-    </div>
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav id="nav" class="">
+  <div class="nav-wordmark">
+    LEXARA
+    <div class="nav-wordmark-sep"></div>
+    <span class="nav-wordmark-sub">法律事務所</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#practice">取扱業務</a></li>
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#team">弁護士紹介</a></li>
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#fees">費用案内</a></li>
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact">お問い合わせ</a></li>
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact" class="nav-cta">無料相談</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="メニューを開く">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
-    <!-- Floating leaves -->
-    <div class="leaf" style="left:10%;animation-duration:12s;animation-delay:0s;top:-5%;">🍃</div>
-    <div class="leaf" style="left:25%;animation-duration:15s;animation-delay:3s;top:-5%;font-size:0.7rem;">🌿</div>
-    <div class="leaf" style="left:60%;animation-duration:11s;animation-delay:1.5s;top:-5%;">🍃</div>
-    <div class="leaf" style="left:80%;animation-duration:14s;animation-delay:5s;top:-5%;font-size:0.8rem;">🍂</div>
-    <div class="leaf" style="left:45%;animation-duration:13s;animation-delay:7s;top:-5%;font-size:0.6rem;">🌿</div>
+<!-- モバイルメニュー -->
+<div class="mobile-menu" id="mobileMenu">
+  <ul class="mobile-menu-links">
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#practice" class="mobile-nav-link">取扱業務</a></li>
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#team" class="mobile-nav-link">弁護士紹介</a></li>
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#fees" class="mobile-nav-link">費用案内</a></li>
+    <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact" class="mobile-nav-link">お問い合わせ</a></li>
+  </ul>
+  <a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact" class="mobile-menu-cta mobile-nav-link">無料相談を予約する →</a>
+  <p class="mobile-menu-footer">© 2025 LEXARA法律事務所</p>
+</div>
 
-    <div class="hero-content">
-      <p class="hero-eyebrow">Nestled in the heart of the woods</p>
-      <h1 class="hero-title">Forest<br><em>Cafe</em></h1>
-      <p class="hero-tagline">森の静けさの中で、本物の一杯を。</p>
-      <a href="#concept" class="hero-cta">
-        Explore
-        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 1L13 5L9 9M1 5H13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-    </div>
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-glow"></div>
+    <div class="hero-bg-line"></div>
+  </div>
+  <div class="hero-bg-num">1992</div>
 
-    <div class="hero-scroll">
-      <div class="scroll-line"></div>
-      <span>Scroll</span>
-    </div>
-  </section>
+  <div class="hero-content">
 
-  <!-- ──────────────── CONCEPT ──────────────── -->
-  <section class="concept" id="concept">
-    <div class="section-inner">
-      <div class="concept-grid">
+    <h1 class="hero-title">
+      <span class="hero-title-line"><span class="hero-title-inner">正義を、</span></span>
+      <span class="hero-title-line"><span class="hero-title-inner">確実な結果で</span></span>
+      <span class="hero-title-line"><span class="hero-title-inner">定義する。</span></span>
+    </h1>
 
-        <!-- Left: illustration -->
-        <div class="concept-visual fade-in">
-          <div class="concept-deco"></div>
-          <div class="concept-deco-2"></div>
-          <div class="concept-img-frame">
-            <svg class="concept-illustration" viewBox="0 0 400 533" xmlns="http://www.w3.org/2000/svg">
-              <!-- Background -->
-              <rect width="400" height="533" fill="#1e3024"/>
-              <!-- Ambient light -->
-              <radialGradient id="ambLight" cx="50%" cy="30%" r="60%">
-                <stop offset="0%" stop-color="#4a7c59" stop-opacity="0.4"/>
-                <stop offset="100%" stop-color="#0d1a10" stop-opacity="0"/>
-              </radialGradient>
-              <rect width="400" height="533" fill="url(#ambLight)"/>
-              <!-- Window / light beam -->
-              <polygon points="140,0 260,0 310,533 90,533" fill="#c9a96e" opacity="0.06"/>
-              <polygon points="165,0 235,0 280,533 120,533" fill="#f5f0e8" opacity="0.04"/>
-              <!-- Wooden table surface -->
-              <rect x="0" y="340" width="400" height="193" fill="#3a2918"/>
-              <!-- Table texture -->
-              <line x1="60" y1="340" x2="55" y2="533" stroke="#4a3728" stroke-width="1.5"/>
-              <line x1="130" y1="340" x2="125" y2="533" stroke="#4a3728" stroke-width="1"/>
-              <line x1="220" y1="340" x2="218" y2="533" stroke="#4a3728" stroke-width="1.5"/>
-              <line x1="300" y1="340" x2="298" y2="533" stroke="#2d1e10" stroke-width="1"/>
-              <line x1="360" y1="340" x2="358" y2="533" stroke="#4a3728" stroke-width="1"/>
-              <!-- Table edge highlight -->
-              <rect x="0" y="338" width="400" height="5" fill="#5a3e28" opacity="0.8"/>
-              <!-- Coffee cup saucer -->
-              <ellipse cx="200" cy="365" rx="75" ry="12" fill="#6b4c36"/>
-              <ellipse cx="200" cy="363" rx="75" ry="12" fill="#7a5c45"/>
-              <!-- Coffee cup body -->
-              <path d="M145 280 Q145 340 155 358 Q200 365 245 358 Q255 340 255 280 Z" fill="#5a3e28"/>
-              <path d="M148 280 Q148 336 158 354 Q200 361 242 354 Q252 336 252 280 Z" fill="#6b4c36"/>
-              <!-- Cup rim -->
-              <ellipse cx="200" cy="280" rx="52" ry="10" fill="#7a5c45"/>
-              <ellipse cx="200" cy="278" rx="52" ry="10" fill="#8a6a52"/>
-              <!-- Coffee surface -->
-              <ellipse cx="200" cy="278" rx="45" ry="8" fill="#2c1a0e"/>
-              <!-- Latte art swirl -->
-              <path d="M185 278 Q192 272 200 275 Q208 272 215 278" stroke="#c9a96e" stroke-width="1.5" fill="none" opacity="0.7"/>
-              <circle cx="200" cy="276" r="4" fill="#c9a96e" opacity="0.5"/>
-              <!-- Steam -->
-              <path d="M185 265 Q182 255 185 245 Q188 235 185 225" stroke="#f5f0e8" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
-              <path d="M200 262 Q197 252 200 242 Q203 232 200 222" stroke="#f5f0e8" stroke-width="1.2" fill="none" opacity="0.2" stroke-linecap="round"/>
-              <path d="M215 265 Q218 255 215 245 Q212 235 215 225" stroke="#f5f0e8" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
-              <!-- Cup handle -->
-              <path d="M255 300 Q278 300 278 320 Q278 340 255 340" stroke="#5a3e28" stroke-width="8" fill="none" stroke-linecap="round"/>
-              <path d="M255 302 Q274 302 274 320 Q274 338 255 338" stroke="#6b4c36" stroke-width="5" fill="none" stroke-linecap="round"/>
-              <!-- Small leaf on saucer -->
-              <ellipse cx="155" cy="362" rx="10" ry="5" fill="#4a7c59" transform="rotate(-20,155,362)"/>
-              <!-- Foliage / plants at sides -->
-              <g opacity="0.8">
-                <ellipse cx="40" cy="200" rx="35" ry="45" fill="#2d4a35" transform="rotate(-15,40,200)"/>
-                <ellipse cx="55" cy="175" rx="28" ry="38" fill="#3a5f42" transform="rotate(10,55,175)"/>
-                <ellipse cx="25" cy="230" rx="25" ry="35" fill="#243d2a" transform="rotate(-5,25,230)"/>
-              </g>
-              <g opacity="0.8">
-                <ellipse cx="360" cy="210" rx="35" ry="45" fill="#2d4a35" transform="rotate(15,360,210)"/>
-                <ellipse cx="348" cy="185" rx="28" ry="38" fill="#3a5f42" transform="rotate(-10,348,185)"/>
-                <ellipse cx="375" cy="235" rx="25" ry="35" fill="#243d2a" transform="rotate(5,375,235)"/>
-              </g>
-              <!-- Subtle vignette -->
-              <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
-                <stop offset="0%" stop-color="transparent"/>
-                <stop offset="100%" stop-color="#0a1510" stop-opacity="0.7"/>
-              </radialGradient>
-              <rect width="400" height="533" fill="url(#vignette)"/>
-            </svg>
-          </div>
+    <div class="hero-meta">
+      <p class="hero-desc">
+        戦略的な精度と揺るぎない誠実さが交わるところ。<br>負けられない依頼人のために、私たちは戦います。
+      </p>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">98%</div>
+          <div class="hero-stat-label">勝訴率</div>
         </div>
-
-        <!-- Right: text -->
-        <div class="concept-text-col fade-in" style="transition-delay:0.15s">
-          <p class="section-label">Our Story</p>
-          <h2 class="concept-heading">
-            日常を忘れる、<br>
-            <em>森の隠れ家</em>
-          </h2>
-          <p class="concept-text">
-            喧騒を離れ、木漏れ日の差し込む静かな森の中へ。<br>
-            Forest Cafeは、自然と珈琲と人が穏やかに交差する場所です。
-          </p>
-          <p class="concept-text">
-            自家焙煎にこだわった豆を、バリスタが一杯一杯丁寧に淹れます。<br>
-            ゆっくりと時間が流れる空間で、本物の味と香りをお楽しみください。
-          </p>
-          <blockquote class="concept-quote">
-            「森の息吹を感じながら、<br>珈琲の深みと向き合う時間を。」
-          </blockquote>
+        <div>
+          <div class="hero-stat-num">32+</div>
+          <div class="hero-stat-label">弁護士業<br>実績年数</div>
         </div>
-
+        <div>
+          <div class="hero-stat-num">10億円+</div>
+          <div class="hero-stat-label">依頼人のための<br>回収実績</div>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ──────────────── MENU ──────────────── -->
-  <section class="menu" id="menu">
-    <div class="section-inner">
+  <div class="hero-scroll-hint">スクロールして詳細を見る</div>
+</section>
 
-      <div class="menu-header fade-in">
-        <p class="section-label" style="justify-content:center;">— Our Favorites —</p>
-        <h2 class="menu-heading">Signature <em>Menu</em></h2>
-        <p class="menu-sub">森から生まれた、こだわりの一品</p>
-      </div>
+<div class="divider"></div>
 
-      <div class="menu-cards">
-
-        <!-- Card 1: Coffee -->
-        <div class="menu-card fade-in" style="transition-delay:0.1s">
-          <div class="menu-card-img">
-            <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-              <rect width="400" height="300" fill="#1a2e20"/>
-              <radialGradient id="mLight1" cx="50%" cy="40%" r="55%">
-                <stop offset="0%" stop-color="#3a5f3e" stop-opacity="0.5"/>
-                <stop offset="100%" stop-color="#0d1a10" stop-opacity="0"/>
-              </radialGradient>
-              <rect width="400" height="300" fill="url(#mLight1)"/>
-              <!-- Table -->
-              <rect x="0" y="200" width="400" height="100" fill="#2c1e12"/>
-              <rect x="0" y="198" width="400" height="4" fill="#3d2a18"/>
-              <!-- Cup & saucer -->
-              <ellipse cx="200" cy="218" rx="65" ry="10" fill="#5a3e28"/>
-              <ellipse cx="200" cy="216" rx="65" ry="10" fill="#6b4c36"/>
-              <path d="M152 160 Q152 208 160 214 Q200 222 240 214 Q248 208 248 160 Z" fill="#4a3020"/>
-              <path d="M155 160 Q155 206 163 212 Q200 219 237 212 Q245 206 245 160 Z" fill="#5a3e28"/>
-              <ellipse cx="200" cy="160" rx="45" ry="8" fill="#6b4c36"/>
-              <ellipse cx="200" cy="158" rx="45" ry="8" fill="#7a5a42"/>
-              <ellipse cx="200" cy="158" rx="38" ry="6" fill="#1a0e06"/>
-              <!-- Latte art heart -->
-              <path d="M186 157 Q190 152 194 156 Q198 152 202 157 Q202 162 194 167 Q186 162 186 157Z" fill="#c9a96e" opacity="0.6"/>
-              <!-- Steam lines -->
-              <path d="M183 143 Q180 133 183 123" stroke="#f5f0e8" stroke-width="1" fill="none" opacity="0.3" stroke-linecap="round"/>
-              <path d="M200 140 Q197 130 200 120" stroke="#f5f0e8" stroke-width="1" fill="none" opacity="0.25" stroke-linecap="round"/>
-              <path d="M217 143 Q220 133 217 123" stroke="#f5f0e8" stroke-width="1" fill="none" opacity="0.3" stroke-linecap="round"/>
-              <!-- Handle -->
-              <path d="M248 175 Q268 175 268 193 Q268 210 248 210" stroke="#4a3020" stroke-width="7" fill="none" stroke-linecap="round"/>
-              <!-- Plants -->
-              <ellipse cx="30" cy="180" rx="40" ry="55" fill="#2d4a35" transform="rotate(-10,30,180)" opacity="0.9"/>
-              <ellipse cx="370" cy="170" rx="38" ry="50" fill="#243d2a" transform="rotate(12,370,170)" opacity="0.9"/>
-              <!-- Vignette -->
-              <radialGradient id="vig1" cx="50%" cy="50%" r="65%">
-                <stop offset="0%" stop-color="transparent"/>
-                <stop offset="100%" stop-color="#0a1208" stop-opacity="0.8"/>
-              </radialGradient>
-              <rect width="400" height="300" fill="url(#vig1)"/>
-            </svg>
-          </div>
-          <div class="menu-card-body">
-            <p class="menu-card-tag">Signature Coffee</p>
-            <h3 class="menu-card-name">Forest Latte<em>フォレスト ラテ</em></h3>
-            <p class="menu-card-desc">自家焙煎のエチオピア豆を使用したまろやかなラテ。フルーティーな香りとクリーミーなミルクフォームが絶妙に調和。</p>
-            <div class="menu-card-price">¥780 <span>税込</span></div>
-          </div>
-        </div>
-
-        <!-- Card 2: Cake -->
-        <div class="menu-card fade-in" style="transition-delay:0.2s">
-          <div class="menu-card-img">
-            <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-              <rect width="400" height="300" fill="#1e2a1a"/>
-              <radialGradient id="mLight2" cx="40%" cy="30%" r="60%">
-                <stop offset="0%" stop-color="#c9a96e" stop-opacity="0.15"/>
-                <stop offset="100%" stop-color="#0d1208" stop-opacity="0"/>
-              </radialGradient>
-              <rect width="400" height="300" fill="url(#mLight2)"/>
-              <!-- Table -->
-              <rect x="0" y="205" width="400" height="95" fill="#2c1e12"/>
-              <rect x="0" y="203" width="400" height="4" fill="#3d2a18"/>
-              <!-- Plate -->
-              <ellipse cx="200" cy="222" rx="90" ry="14" fill="#d9cdb8"/>
-              <ellipse cx="200" cy="220" rx="90" ry="14" fill="#ede5d5"/>
-              <!-- Cake slice body -->
-              <polygon points="148,145 200,135 252,145 248,213 152,213" fill="#c4956a"/>
-              <polygon points="150,147 200,137 250,147 246,210 154,210" fill="#d4a578"/>
-              <!-- Cream layers -->
-              <polygon points="150,170 250,170 250,185 150,185" fill="#f5f0e8"/>
-              <polygon points="151,175 249,175 249,180 151,180" fill="#ede5d5"/>
-              <!-- Top cream -->
-              <ellipse cx="200" cy="147" rx="50" ry="10" fill="#f5f0e8"/>
-              <!-- Berries on top -->
-              <circle cx="185" cy="143" r="6" fill="#8B2252"/>
-              <circle cx="200" cy="140" r="7" fill="#a02d60"/>
-              <circle cx="215" cy="143" r="6" fill="#8B2252"/>
-              <!-- Leaves -->
-              <ellipse cx="178" cy="140" rx="7" ry="4" fill="#4a7c59" transform="rotate(-30,178,140)"/>
-              <ellipse cx="222" cy="140" rx="7" ry="4" fill="#4a7c59" transform="rotate(30,222,140)"/>
-              <!-- Powdered sugar dots -->
-              <circle cx="163" cy="158" r="2" fill="#f5f0e8" opacity="0.6"/>
-              <circle cx="237" cy="162" r="1.5" fill="#f5f0e8" opacity="0.5"/>
-              <circle cx="175" cy="195" r="2" fill="#f5f0e8" opacity="0.4"/>
-              <!-- Fork -->
-              <rect x="270" y="195" width="3" height="25" rx="1.5" fill="#8a7a6a" opacity="0.6"/>
-              <line x1="268" y1="197" x2="268" y2="207" stroke="#8a7a6a" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
-              <line x1="272" y1="197" x2="272" y2="207" stroke="#8a7a6a" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
-              <line x1="276" y1="197" x2="276" y2="207" stroke="#8a7a6a" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
-              <!-- Plants -->
-              <ellipse cx="22" cy="185" rx="38" ry="52" fill="#1e3024" transform="rotate(-8,22,185)" opacity="0.95"/>
-              <ellipse cx="378" cy="175" rx="36" ry="48" fill="#2d4a35" transform="rotate(10,378,175)" opacity="0.9"/>
-              <radialGradient id="vig2" cx="50%" cy="50%" r="65%">
-                <stop offset="0%" stop-color="transparent"/>
-                <stop offset="100%" stop-color="#080f06" stop-opacity="0.8"/>
-              </radialGradient>
-              <rect width="400" height="300" fill="url(#vig2)"/>
-            </svg>
-          </div>
-          <div class="menu-card-body">
-            <p class="menu-card-tag">Seasonal Cake</p>
-            <h3 class="menu-card-name">Berry Tart<em>森のベリータルト</em></h3>
-            <p class="menu-card-desc">地元農家から直送されるフレッシュベリーをふんだんに使用。さっくりとしたタルト生地と濃厚なカスタードクリームが絶品。</p>
-            <div class="menu-card-price">¥620 <span>税込</span></div>
-          </div>
-        </div>
-
-        <!-- Card 3: Special drink -->
-        <div class="menu-card fade-in" style="transition-delay:0.3s">
-          <div class="menu-card-img">
-            <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-              <rect width="400" height="300" fill="#162214"/>
-              <radialGradient id="mLight3" cx="60%" cy="35%" r="55%">
-                <stop offset="0%" stop-color="#4a7c59" stop-opacity="0.3"/>
-                <stop offset="100%" stop-color="#0a150c" stop-opacity="0"/>
-              </radialGradient>
-              <rect width="400" height="300" fill="url(#mLight3)"/>
-              <!-- Table -->
-              <rect x="0" y="208" width="400" height="92" fill="#28190e"/>
-              <rect x="0" y="206" width="400" height="4" fill="#38240e"/>
-              <!-- Glass base -->
-              <ellipse cx="200" cy="222" rx="45" ry="8" fill="#c8b89a" opacity="0.6"/>
-              <!-- Glass body -->
-              <path d="M160 150 L155 215 Q200 224 245 215 L240 150 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
-              <!-- Matcha layers -->
-              <path d="M162 195 L237 195 Q240 210 245 215 Q200 224 155 215 Q160 210 162 195Z" fill="#4a7c59" opacity="0.9"/>
-              <path d="M163 178 L236 178 L237 195 L162 195Z" fill="#5a9069" opacity="0.8"/>
-              <!-- Milk layer -->
-              <path d="M163 165 L236 165 L237 178 L163 178Z" fill="#f0e8d8" opacity="0.7"/>
-              <!-- Ice cubes -->
-              <rect x="178" y="168" width="16" height="12" rx="2" fill="rgba(255,255,255,0.35)" transform="rotate(-10,186,174)"/>
-              <rect x="200" y="170" width="14" height="11" rx="2" fill="rgba(255,255,255,0.3)" transform="rotate(8,207,175)"/>
-              <rect x="218" y="167" width="13" height="12" rx="2" fill="rgba(255,255,255,0.25)" transform="rotate(-5,224,173)"/>
-              <!-- Foam top -->
-              <ellipse cx="200" cy="152" rx="38" ry="8" fill="#f5f0e8" opacity="0.85"/>
-              <path d="M167 152 Q180 146 192 152 Q200 148 208 152 Q220 147 232 152" stroke="#ede5d5" stroke-width="0.8" fill="none" opacity="0.6"/>
-              <!-- Straw -->
-              <rect x="220" y="90" width="5" height="130" rx="2.5" fill="#c9a96e" opacity="0.8" transform="rotate(5,222,155)"/>
-              <!-- Matcha powder on foam -->
-              <circle cx="188" cy="150" r="2" fill="#4a7c59" opacity="0.5"/>
-              <circle cx="196" cy="148" r="1.5" fill="#3a6048" opacity="0.4"/>
-              <circle cx="205" cy="150" r="2" fill="#4a7c59" opacity="0.5"/>
-              <!-- Plants -->
-              <ellipse cx="25" cy="190" rx="42" ry="58" fill="#1e3024" transform="rotate(-12,25,190)" opacity="0.95"/>
-              <ellipse cx="375" cy="178" rx="38" ry="52" fill="#2d4a35" transform="rotate(8,375,178)" opacity="0.9"/>
-              <radialGradient id="vig3" cx="50%" cy="50%" r="65%">
-                <stop offset="0%" stop-color="transparent"/>
-                <stop offset="100%" stop-color="#050c07" stop-opacity="0.85"/>
-              </radialGradient>
-              <rect width="400" height="300" fill="url(#vig3)"/>
-            </svg>
-          </div>
-          <div class="menu-card-body">
-            <p class="menu-card-tag">Special Drink</p>
-            <h3 class="menu-card-name">Matcha Mist<em>抹茶ミスト</em></h3>
-            <p class="menu-card-desc">宇治産の上質な抹茶を使った、濃厚でまろやかな一杯。ミルクとの絶妙なバランスが、穏やかな森の空気を思わせます。</p>
-            <div class="menu-card-price">¥720 <span>税込</span></div>
-          </div>
-        </div>
-
+<!-- ============================================================
+     ABOUT STRIP
+     ============================================================ -->
+<section class="about-strip">
+  <div class="about-strip-inner">
+    <div data-reveal="left" class="in-view">
+      <p class="about-pull">
+        「法律は弱者の盾ではない。準備した者の武器である。」
+      </p>
+    </div>
+    <div data-reveal="right" class="in-view">
+      <div class="s-tag">私たちの理念</div>
+      <div class="about-body">
+        <p>
+          LEXARAは、<strong>綿密な分析力と戦略的な先見性</strong>が交わる地点で活動しています。私どもの弁護士は単なるアドバイザーではなく、解決の設計者です。どんな法的紛争においても、常に三手先を読む力を持っています。
+        </p>
+        <p>
+          案件の規模に関わらず、すべての依頼に同じ妥協なき準備を行います。勝てない案件は受けません。守れない約束はしません。これがLEXARAの原則です。
+        </p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ──────────────── ACCESS ──────────────── -->
-  <section class="access" id="access">
-    <div class="section-inner">
-      <div class="access-grid">
+<!-- ============================================================
+     PRACTICE AREAS
+     ============================================================ -->
+<section class="practice" id="practice">
+  <div class="s-inner">
+    <div class="practice-header">
+      <div data-reveal="" class="in-view">
+        <div class="s-tag">取扱業務</div>
+        <h2 class="s-heading">専門分野と<br><em>業務内容</em></h2>
+      </div>
+      <p class="practice-header-right in-view" data-reveal="right">
+        4つの専門分野において、数十年にわたる実績と深い専門知識をもって、最も困難な法的課題に対応します。
+      </p>
+    </div>
 
-        <!-- Info -->
-        <div class="fade-in">
-          <p class="section-label">Find Us</p>
-          <h2 class="access-heading">
-            森の奥の<br>
-            <em>小さな扉</em>
-          </h2>
+    <div class="practice-grid in-view" data-reveal="scale">
 
-          <ul class="info-list">
-            <li class="info-item">
-              <span class="info-key">Address</span>
-              <span class="info-val"><strong>〒412-0042</strong><br>静岡県御殿場市印野 1234-5<br>富士山麓の森の中</span>
-            </li>
-            <li class="info-item">
-              <span class="info-key">Hours</span>
-              <span class="info-val">
-                <strong>10:00 — 18:00</strong><br>
-                L.O. フード 17:30 / ドリンク 17:45
-              </span>
-            </li>
-            <li class="info-item">
-              <span class="info-key">Closed</span>
-              <span class="info-val">毎週月曜日・火曜日<br>（祝日の場合は翌平日）</span>
-            </li>
-            <li class="info-item">
-              <span class="info-key">Tel</span>
-              <span class="info-val"><strong>0550-00-0000</strong></span>
-            </li>
-            <li class="info-item">
-              <span class="info-key">Access</span>
-              <span class="info-val">御殿場駅より車で約20分<br>駐車場：15台（無料）</span>
-            </li>
-          </ul>
+      <div class="pcard pcard--large" style="">
+        <div class="pcard-num">01</div>
+        <span class="pcard-icon">⚖️</span>
+        <h3 class="pcard-title">企業間<br>訴訟</h3>
+        <p class="pcard-desc">
+          株主間紛争・企業間の訴訟・経営権争いなど、高度な商事紛争においては、法律と経営の両方を深く理解した弁護士が不可欠です。私どもは日本の司法において最も複雑な商事紛争を、国内外の企業に代わって解決してきた実績を持っています。
+        </p>
+        <a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact" class="pcard-link">ご相談はこちら</a>
+        <div class="pcard-bg-num">01</div>
+      </div>
 
-          <div class="access-note">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="7" stroke="#c9a96e" stroke-width="1"/>
-              <path d="M8 7v4M8 5v1" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round"/>
-            </svg>
-            <span>森の中にございます。お車でのご来店を推奨しております。木々の間の小さな看板を目印にお越しください。</span>
+      <div class="pcard">
+        <div class="pcard-num">02</div>
+        <span class="pcard-icon">🏛️</span>
+        <h3 class="pcard-title">相続・<br>遺産</h3>
+        <p class="pcard-desc">遺言の無効主張、複雑な資産移転、国際相続など、あらゆる相続問題に完全な守秘義務のもと対応します。</p>
+        <a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact" class="pcard-link">お問い合わせ</a>
+        <div class="pcard-bg-num">02</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-num">03</div>
+        <span class="pcard-icon">👪</span>
+        <h3 class="pcard-title">家族法・<br>離婚</h3>
+        <p class="pcard-desc">離婚、財産分与、親権問題など、家族に関わる紛争を迅速かつ的確に解決します。</p>
+        <a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact" class="pcard-link">お問い合わせ</a>
+        <div class="pcard-bg-num">03</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-num">04</div>
+        <span class="pcard-icon">🛡️</span>
+        <h3 class="pcard-title">危機<br>対応</h3>
+        <p class="pcard-desc">緊急の法的介入が必要な場面で、経営幹部・企業を守るため24時間365日対応します。</p>
+        <a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact" class="pcard-link">お問い合わせ</a>
+        <div class="pcard-bg-num">04</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TEAM
+     ============================================================ -->
+<section class="team" id="team">
+  <div class="s-inner">
+    <div class="team-header in-view" data-reveal="">
+      <div class="s-tag">弁護士紹介</div>
+      <h2 class="s-heading">担当<br><em>弁護士</em></h2>
+    </div>
+
+    <div class="team-grid">
+      <div class="tcard in-view" data-reveal="">
+        <div class="tcard-avatar">森</div>
+        <div class="tcard-name">森 リチャード</div>
+        <div class="tcard-role">シニアパートナー — 企業間訴訟</div>
+        <p class="tcard-bio">
+          法務省元顧問弁護士。東京・シンガポール・ニューヨークにわたる27年の実務経験を持ち、1億円超の国際商事紛争を専門とする。
+        </p>
+      </div>
+
+      <div class="tcard in-view" data-reveal="" style="transition-delay: 0.1s;">
+        <div class="tcard-avatar">黒</div>
+        <div class="tcard-name">黒田 亜希子</div>
+        <div class="tcard-role">パートナー — 家族法・相続</div>
+        <p class="tcard-bio">
+          Chambers Asia-Pacific 3年連続選出。高額資産を伴う離婚案件における手法は、日本の法科大学院で実務の規範として研究されている。
+        </p>
+      </div>
+
+      <div class="tcard in-view" data-reveal="" style="transition-delay:0.2s">
+        <div class="tcard-avatar">高</div>
+        <div class="tcard-name">高橋 健二</div>
+        <div class="tcard-role">パートナー — 危機対応・刑事弁護</div>
+        <p class="tcard-bio">
+          企業危機・刑事弁護を専門とし、予審での却下率96%という実績を持つ。緊急対応を必要とする依頼人のために24時間365日対応。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FEES TABLE
+     ============================================================ -->
+<section class="fees" id="fees">
+  <div class="fees-inner">
+    <div class="fees-intro in-view" data-reveal="left">
+      <div class="s-tag">料金について</div>
+      <h2 class="s-heading">費用<br><em>案内</em></h2>
+      <p class="fees-note">
+        記載の費用はすべて消費税別です。複雑な案件については、初回相談後に個別の顧問契約が必要になる場合があります。
+      </p>
+      <div class="fees-badge">
+        🔒 &nbsp; 弁護士・依頼人間の守秘義務
+      </div>
+    </div>
+
+    <div data-reveal="right" class="in-view">
+      <table class="fees-table">
+        <thead>
+          <tr>
+            <th>サービス内容</th>
+            <th>費用</th>
+            <th>備考</th>
+            <th>状況</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>初回相談</td>
+            <td class="price">¥30,000</td>
+            <td>60分・完全守秘義務</td>
+            <td><span class="tag-pill">受付中</span></td>
+          </tr>
+          <tr>
+            <td>企業間訴訟<br><small>（月額顧問料）</small></td>
+            <td class="price">¥800,000〜</td>
+            <td>戦略立案・書類作成・法廷代理を含む</td>
+            <td><span class="tag-pill">要相談</span></td>
+          </tr>
+          <tr>
+            <td>相続・遺産整理</td>
+            <td class="price">¥150,000〜</td>
+            <td>遺言作成・信託設計・国際資産調整</td>
+            <td><span class="tag-pill">受付中</span></td>
+          </tr>
+          <tr>
+            <td>家族法<br><small>（定額制）</small></td>
+            <td class="price">¥400,000〜</td>
+            <td>離婚・親権・財産分与の全面代理</td>
+            <td><span class="tag-pill">受付中</span></td>
+          </tr>
+          <tr>
+            <td>緊急対応</td>
+            <td class="price">¥500,000</td>
+            <td>24時間緊急対応・最低契約金額</td>
+            <td><span class="tag-pill">24時間</span></td>
+          </tr>
+          <tr>
+            <td>書類審査</td>
+            <td class="price">¥50,000 / 時</td>
+            <td>契約書・秘密保持契約・M&amp;A関連書類</td>
+            <td><span class="tag-pill">受付中</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+     ============================================================ -->
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="contact-left in-view" data-reveal="left">
+      <div class="s-tag">秘密厳守の相談窓口</div>
+      <h2 class="s-heading">まずは<br><em>ご相談ください</em></h2>
+      <p class="contact-desc">
+        最初のご連絡の時点から、すべての通信内容は弁護士・依頼人間の守秘義務により保護されます。どんなに緊急・複雑な案件でもお気軽にご相談ください。
+      </p>
+
+      <div class="contact-detail">
+        <div class="contact-detail-item">
+          <div class="contact-detail-icon">☎</div>
+          <div>
+            <div class="contact-detail-label">直通電話</div>
+            <div class="contact-detail-val">+81 (0)3 — 6xxx — xxxx</div>
+          </div>
+        </div>
+        <div class="contact-detail-item">
+          <div class="contact-detail-icon">✉</div>
+          <div>
+            <div class="contact-detail-label">メールアドレス</div>
+            <div class="contact-detail-val">counsel@lexara-law.jp</div>
+          </div>
+        </div>
+        <div class="contact-detail-item">
+          <div class="contact-detail-icon">⌖</div>
+          <div>
+            <div class="contact-detail-label">所在地</div>
+            <div class="contact-detail-val">丸の内トラストタワー 23F<br>東京都千代田区丸の内2-1-1<br>〒100-0005</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-frame">
+        <div class="map-grid"></div>
+        <div class="map-pin">
+          <div class="map-pin-dot"></div>
+          <div class="map-label">LEXARA法律事務所 — 丸の内</div>
+        </div>
+      </div>
+    </div>
+
+    <div data-reveal="right" class="in-view">
+      <form class="contact-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="fname">お名前</label>
+            <input type="text" id="fname" placeholder="山田 太郎">
+          </div>
+          <div class="form-field">
+            <label for="fcompany">会社名・組織名</label>
+            <input type="text" id="fcompany" placeholder="任意">
           </div>
         </div>
 
-        <!-- Map illustration -->
-        <div class="access-map fade-in" style="transition-delay:0.15s">
-          <svg class="map-frame" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-            <!-- Map background -->
-            <rect width="400" height="400" fill="#e8e0d0"/>
-            <!-- Forest area -->
-            <rect x="0" y="0" width="400" height="400" fill="#d5cfc0"/>
-            <!-- Trees (background) -->
-            <g fill="#4a7c59" opacity="0.25">
-              <circle cx="50" cy="50" r="22"/>
-              <circle cx="95" cy="40" r="18"/>
-              <circle cx="40" cy="95" r="20"/>
-              <circle cx="150" cy="30" r="15"/>
-              <circle cx="350" cy="60" r="20"/>
-              <circle cx="360" cy="110" r="16"/>
-              <circle cx="310" cy="40" r="18"/>
-              <circle cx="30" cy="200" r="22"/>
-              <circle cx="70" cy="240" r="18"/>
-              <circle cx="40" cy="320" r="20"/>
-              <circle cx="370" cy="280" r="22"/>
-              <circle cx="350" cy="340" r="18"/>
-              <circle cx="380" cy="380" r="20"/>
-              <circle cx="100" cy="380" r="18"/>
-              <circle cx="50" cy="360" r="16"/>
-            </g>
-            <!-- Road network -->
-            <g stroke="#b8a88a" stroke-width="8" fill="none" stroke-linecap="round">
-              <!-- Main road horizontal -->
-              <line x1="0" y1="220" x2="400" y2="210"/>
-              <!-- Secondary road -->
-              <line x1="200" y1="0" x2="210" y2="400"/>
-              <!-- Forest path -->
-              <path d="M210 210 Q230 230 250 220 Q270 215 290 230"/>
-            </g>
-            <g stroke="#ccc0a8" stroke-width="5" fill="none" stroke-linecap="round">
-              <line x1="0" y1="220" x2="400" y2="210"/>
-              <line x1="200" y1="0" x2="210" y2="400"/>
-            </g>
-            <!-- Forest path lighter center -->
-            <g stroke="#d9cdb8" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="6,5">
-              <path d="M210 210 Q232 232 252 222 Q272 217 292 232"/>
-            </g>
-            <!-- Green area patches -->
-            <rect x="20" y="20" width="140" height="160" rx="8" fill="#4a7c59" opacity="0.12"/>
-            <rect x="240" y="20" width="140" height="170" rx="8" fill="#4a7c59" opacity="0.12"/>
-            <rect x="20" y="260" width="120" height="120" rx="8" fill="#4a7c59" opacity="0.10"/>
-            <rect x="260" y="250" width="120" height="130" rx="8" fill="#4a7c59" opacity="0.10"/>
-            <!-- Tree dots on green areas -->
-            <g fill="#3a6048" opacity="0.4">
-              <circle cx="60" cy="70" r="9"/><circle cx="95" cy="55" r="7"/>
-              <circle cx="45" cy="110" r="8"/><circle cx="120" cy="90" r="7"/>
-              <circle cx="80" cy="140" r="9"/><circle cx="135" cy="130" r="6"/>
-              <circle cx="270" cy="65" r="8"/><circle cx="310" cy="50" r="7"/>
-              <circle cx="350" cy="80" r="9"/><circle cx="295" cy="100" r="6"/>
-              <circle cx="335" cy="130" r="8"/><circle cx="370" cy="155" r="7"/>
-              <circle cx="55" cy="290" r="8"/><circle cx="90" cy="315" r="7"/>
-              <circle cx="40" cy="350" r="9"/><circle cx="120" cy="345" r="6"/>
-              <circle cx="285" cy="280" r="8"/><circle cx="330" cy="295" r="7"/>
-              <circle cx="360" cy="330" r="9"/><circle cx="310" cy="360" r="6"/>
-            </g>
-            <!-- Location pin / cafe marker -->
-            <g transform="translate(260,185)">
-              <circle cx="0" cy="0" r="22" fill="white" opacity="0.9"/>
-              <circle cx="0" cy="0" r="18" fill="#1e3024"/>
-              <text x="0" y="5" text-anchor="middle" font-size="14" fill="#c9a96e">☕</text>
-            </g>
-            <!-- Pin tail -->
-            <path d="M260 207 L260 228 Q260 234 265 234 Q270 234 270 228 L260 207Z" fill="#1e3024"/>
-            <!-- Radiating rings -->
-            <circle cx="260" cy="185" r="32" fill="none" stroke="#1e3024" stroke-width="1" opacity="0.2"/>
-            <circle cx="260" cy="185" r="44" fill="none" stroke="#1e3024" stroke-width="0.8" opacity="0.12"/>
-            <!-- Label -->
-            <rect x="272" y="170" width="100" height="28" rx="4" fill="white" opacity="0.9"/>
-            <text x="322" y="185" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#1e3024" font-style="italic">Forest Cafe</text>
-            <text x="322" y="196" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#7a6a5a">御殿場・富士山麓</text>
-            <!-- Compass rose -->
-            <g transform="translate(365,355)" fill="#8a7a6a" font-family="Arial,sans-serif" font-size="7">
-              <polygon points="0,-14 3,-5 0,-8 -3,-5" fill="#5a4a3a"/>
-              <polygon points="0,14 3,5 0,8 -3,5" fill="#8a7a6a"/>
-              <polygon points="-14,0 -5,3 -8,0 -5,-3" fill="#8a7a6a"/>
-              <polygon points="14,0 5,3 8,0 5,-3" fill="#8a7a6a"/>
-              <circle cx="0" cy="0" r="3" fill="#5a4a3a"/>
-              <text x="0" y="-16" text-anchor="middle" fill="#5a4a3a" font-size="7">N</text>
-            </g>
-            <!-- Map border -->
-            <rect width="400" height="400" fill="none" stroke="#c8b89a" stroke-width="2"/>
-            <!-- Subtle vignette for map -->
-            <radialGradient id="mapVig" cx="50%" cy="50%" r="70%">
-              <stop offset="0%" stop-color="transparent"/>
-              <stop offset="100%" stop-color="#b8a888" stop-opacity="0.25"/>
-            </radialGradient>
-            <rect width="400" height="400" fill="url(#mapVig)"/>
-          </svg>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="femail">メールアドレス</label>
+            <input type="email" id="femail" placeholder="taro@example.com">
+          </div>
+          <div class="form-field">
+            <label for="fphone">電話番号</label>
+            <input type="tel" id="fphone" placeholder="090-0000-0000">
+          </div>
         </div>
 
-      </div>
-    </div>
-  </section>
+        <div class="form-field">
+          <label for="farea">ご相談の分野</label>
+          <select id="farea">
+            <option value="" disabled="" selected="">分野をお選びください</option>
+            <option>企業間訴訟</option>
+            <option>相続・遺産</option>
+            <option>家族法・離婚</option>
+            <option>危機対応</option>
+            <option>その他・一般相談</option>
+          </select>
+        </div>
 
-  <!-- ──────────────── FOOTER ──────────────── -->
+        <div class="form-field">
+          <label for="fmatter">ご相談内容</label>
+          <textarea id="fmatter" placeholder="ご相談内容をご記入ください。いただいた情報はすべて守秘義務のもと厳重に管理いたします。"></textarea>
+        </div>
+
+        <div class="form-check-row">
+          <input type="checkbox" id="fprivacy">
+          <label for="fprivacy">
+            本フォームへの入力内容は弁護士・依頼人間の守秘義務により保護されます。LEXARA法律事務所が本相談の目的のみに情報を使用することに同意します。
+          </label>
+        </div>
+
+        <button type="submit" class="form-submit">
+          <span>秘密相談を送信する</span>
+          <span class="form-submit-arrow">→</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
   <footer>
     <div class="footer-inner">
-      <div class="footer-logo">Forest <em>Cafe</em></div>
-      <p class="footer-tagline">森の静けさの中で、本物の一杯を。</p>
-      <div class="footer-divider"></div>
+      <div class="footer-wordmark">LEXARA</div>
       <ul class="footer-links">
-        <li><a href="#concept">Concept</a></li>
-        <li><a href="#menu">Menu</a></li>
-        <li><a href="#access">Access</a></li>
+        <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#practice">業務内容</a></li>
+        <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#team">弁護士紹介</a></li>
+        <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#fees">費用案内</a></li>
+        <li><a href="file:///C:/Users/taiga/Downloads/lexara-law_12.html#contact">お問い合わせ</a></li>
       </ul>
-      <p class="footer-copy">&copy; 2025 Forest Cafe. All rights reserved.</p>
+      <p class="footer-copy">© 2025 LEXARA法律事務所 All rights reserved. — 東京弁護士会所属</p>
     </div>
   </footer>
+</section>
 
-  <!-- ──────────────── JS ──────────────── -->
-  <script>
-    // Nav scroll effect
-    const nav = document.getElementById('mainNav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 60);
-    });
+<script>
+// ============================================================
+// SCROLL PROGRESS BAR
+// ============================================================
+const scrollBar = document.getElementById('scrollBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  scrollBar.style.width = pct + '%';
+}, { passive: true });
 
-    // Intersection Observer for fade-in
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.12 });
+// ============================================================
+// NAV SOLID ON SCROLL
+// ============================================================
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('solid', window.scrollY > 30);
+}, { passive: true });
 
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-  </script>
-</body>
-</html>
+// ============================================================
+// CUSTOM CURSOR
+// ============================================================
+const dot = document.getElementById('cDot');
+let mx = 0, my = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px';
+  dot.style.top  = my + 'px';
+});
+
+// ============================================================
+// INTERSECTION OBSERVER — SCROLL REVEALS
+// ============================================================
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in-view');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+// ============================================================
+// 3D CARD TILT (Spring physics approximation)
+// ============================================================
+document.querySelectorAll('.pcard, .tcard').forEach(card => {
+  let vx = 0, vy = 0;    // velocity
+  let cx = 0, cy = 0;    // current rotation
+  let tx = 0, ty = 0;    // target rotation
+  let rafId = null;
+  const STIFFNESS = 0.18;
+  const DAMPING   = 0.75;
+  const MAX_ROT   = 10;
+
+  function spring() {
+    vx = vx * DAMPING + (tx - cx) * STIFFNESS;
+    vy = vy * DAMPING + (ty - cy) * STIFFNESS;
+    cx += vx; cy += vy;
+
+    card.style.transform = `perspective(900px) rotateX(${cy}deg) rotateY(${cx}deg) translateZ(${Math.abs(cx)+Math.abs(cy) > 0.5 ? 6 : 0}px)`;
+
+    if (Math.abs(vx) > 0.005 || Math.abs(vy) > 0.005 || Math.abs(tx - cx) > 0.01 || Math.abs(ty - cy) > 0.01) {
+      rafId = requestAnimationFrame(spring);
+    } else {
+      card.style.transform = '';
+      rafId = null;
+    }
+  }
+
+  card.addEventListener('mousemove', e => {
+    const r   = card.getBoundingClientRect();
+    const nx  = ((e.clientX - r.left)  / r.width  - 0.5) * 2;
+    const ny  = ((e.clientY - r.top)   / r.height - 0.5) * 2;
+    tx = nx * MAX_ROT;
+    ty = -ny * MAX_ROT;
+    if (!rafId) rafId = requestAnimationFrame(spring);
+  });
+
+  card.addEventListener('mouseleave', () => {
+    tx = 0; ty = 0;
+    if (!rafId) rafId = requestAnimationFrame(spring);
+  });
+});
+
+// ============================================================
+// HAMBURGER MENU
+// ============================================================
+const navToggle   = document.getElementById('navToggle');
+const mobileMenu  = document.getElementById('mobileMenu');
+
+navToggle.addEventListener('click', () => {
+  const isOpen = mobileMenu.classList.toggle('open');
+  navToggle.classList.toggle('open', isOpen);
+  navToggle.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
+
+// メニュー内リンクをクリックしたら閉じる
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    navToggle.classList.remove('open');
+    navToggle.setAttribute('aria-label', 'メニューを開く');
+    document.body.style.overflow = '';
+  });
+});
+
+// ============================================================
+// ANCHOR LINK SMOOTH SCROLL (CSS scroll-behavior に委譲)
+// ============================================================
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      window.scrollTo({ top: target.offsetTop - 72, behavior: 'smooth' });
+    }
+  });
+});
+</script>
+
+
+</body></html>
